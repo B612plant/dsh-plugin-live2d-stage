@@ -72,9 +72,6 @@ npx @deepseek-ai/dsh plugin --profile web add dsh-plugin-live2d-stage
 桌面窗口的短期认证仅开放 Live2D 资源、预览、关闭及聊天专用接口；没有宿主全局凭据。新增七个 Lucide 静态 SVG（含 ISC 许可，来源为 lucide-static 官方发布包），仅用于工具栏；不安装完整图标库，不新增 npm 运行或开发依赖。字节和文件增量记录在 build/reports/live2d-plugin/interaction-update.json。
 
 ## 独立开发
-
-本仓库独立构建，不要求 Nirei 或 live2d-agent-platform 工作区。
-
 ```sh
 npm ci
 npm run build
