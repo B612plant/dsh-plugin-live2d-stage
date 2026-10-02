@@ -1,0 +1,8 @@
+# Dialogue bubble assets
+
+- `dialogue-bubble.png`: user-supplied transparent PNG, copied unchanged (1774 × 887).
+- `dialogue-bubble-departing.png`: built-in image_gen edit, used only for the small lower-border repair in `BubbleArtwork`. Its returned background is opaque; never display this file directly. The SVG retains the original alpha artwork, removes the tail region, and clips the edit to the solid repaired border. This preserves the cat, ribbon and all other original decorations.
+
+Final edit prompt (built-in tool, no CLI):
+
+> Use case: precise-object-edit. This image is a UI speech bubble asset, the exact supplied image is the edit target. Make ONLY ONE CHANGE: remove the pointed speech tail protruding downwards near the lower-left (below the small star, between about 20% and 30% of the image width), and reconstruct the rounded bubble's normal smooth almost horizontal lower border and its dashed inner blue line continuously across that small area. The final bubble must have NO speech pointer or tail anywhere. Preserve all the other existing pixels/design as closely as possible: blue-white watercolor gradient pill body, cat peeking top-left, exclamation decorations, small bottom-left star, right blue bow/ribbon, orbit and sparkle decorations, two pawprints. Preserve original 2:1 canvas aspect ratio and exact framing, position and size. Keep the blank interior, no text, no new objects. Background must remain genuinely transparent alpha, including the region where the speech tail was removed. Do not redraw or redesign the cat, bow, borders, colors or layout. This will cross-switch with the original image during a fade animation, so matching alignment and scale is critical.

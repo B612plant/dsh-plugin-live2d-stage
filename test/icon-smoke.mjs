@@ -1,0 +1,11 @@
+import {createRequire} from 'node:module';
+import {pathToFileURL} from 'node:url';
+import {resolve} from 'node:path';
+import {readFile,writeFile} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const require=createRequire(pathToFileURL(resolve(process.argv[2],'package.json')));
+const {readPluginMeta}=await import(pathToFileURL(require.resolve('@deepseek-ai/dsh-app-boot')).href);
+const plugin=resolve(process.argv[3]);const meta=readPluginMeta('dsh-plugin-live2d-stage',pathToFileURL(resolve(plugin,'package.json')).href);
+assert.equal(meta?.error,undefined);assert.equal(meta.title.en,'DSHLive2D');assert.equal(meta.title['zh-cn'],'DSHLive2D');assert.ok(meta?.icon?.startsWith('data:image/webp;base64,'));
+assert.deepEqual(Buffer.from(meta.icon.split(',')[1],'base64'),await readFile(resolve(plugin,'assets/icon.webp')));
+console.log('Harness plugin metadata successfully loads the supplied icon.');

@@ -1,0 +1,3 @@
+- insert:
+    - id: live2d-stage
+      name: dsh-plugin-live2d-stage

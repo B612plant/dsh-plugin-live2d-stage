@@ -1,0 +1,33 @@
+{
+  "name": "Microsoft.Web.WebView2",
+  "version": "1.0.3537.50",
+  "source": "https://api.nuget.org/v3-flatcontainer/microsoft.web.webview2/1.0.3537.50/microsoft.web.webview2.1.0.3537.50.nupkg",
+  "packageSha256": "5ea526bbd728adda0da4d31219267e96460494a427e4894c4e09d9f320f4b9aa",
+  "files": [
+    {
+      "path": "lib/net462/Microsoft.Web.WebView2.Core.dll",
+      "bytes": 649832,
+      "sha256": "e6c517412c245c0f0d65fc494d4f7bf883eba3cfd7023c3f66cc1fe774ec0a22"
+    },
+    {
+      "path": "lib/net462/Microsoft.Web.WebView2.Wpf.dll",
+      "bytes": 82536,
+      "sha256": "832a517556d57d6106b6752b7568088ff2b6df434365d74a923af24d9e69cb1e"
+    },
+    {
+      "path": "runtimes/win-x64/native/WebView2Loader.dll",
+      "bytes": 159848,
+      "sha256": "2f965e10aed3b356a408978a0e6d74eb86e3e722dd008fa9ad39f68884479e85"
+    },
+    {
+      "path": "LICENSE.txt",
+      "bytes": 1487,
+      "sha256": "0af8f1b807512aae39c2ac1aa4d0cae65cabecb6fd554b8439a5162a0d6eca55"
+    },
+    {
+      "path": "NOTICE.txt",
+      "bytes": 3894,
+      "sha256": "106423785c5b7eba0a8e61d1837f2132e9c828e20ad530f565d981c1df60dd90"
+    }
+  ]
+}

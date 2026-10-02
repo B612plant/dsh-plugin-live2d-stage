@@ -1,0 +1,4 @@
+require('fs').writeFileSync(require('path').resolve('build/live2d-floating-inspect/electron-boot.json'),JSON.stringify(process.argv));
+const {app,BrowserWindow,protocol}=require('electron');
+app.setPath('userData',process.argv[3]);protocol.registerSchemesAsPrivileged([{scheme:'dsh-app',privileges:{standard:true,secure:true,supportFetchAPI:true,corsEnabled:true}}]);
+app.whenReady().then(()=>{protocol.handle('dsh-app',async request=>{const u=new URL(request.url);return fetch(process.argv[2]+u.pathname+u.search,{method:request.method,body:request.method==='POST'?await request.arrayBuffer():undefined,headers:{'Content-Type':request.headers.get('content-type')||'application/json'}});});new BrowserWindow({width:1200,height:900,show:false,webPreferences:{contextIsolation:true,nodeIntegration:false}});});
