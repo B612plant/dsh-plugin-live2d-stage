@@ -16,8 +16,7 @@ npx @deepseek-ai/dsh plugin --profile web add dsh-plugin-live2d-stage
 
 发布包内含构建产物、默认角色、图标和第三方许可，无需拉取本项目或运行构建。应用内预览支持 Harness Web；独立桌面悬浮目前支持 Windows x64，依赖系统已有 WebView2 Runtime。
 
-
-适配 DeepSeek Harness Desktop 0.2.0-rc.2。插件提供应用内预览和独立透明置顶窗口，提供可拖动、隐藏和缩放的 Live2D 演出画布。它不包含 Nirei 的记忆、任务规划、语音或会话管理模块，也不删除宿主已有功能。
+适配 DeepSeek Harness Desktop 0.2.0-rc.2。插件提供应用内预览和独立透明置顶窗口，提供可拖动、隐藏和缩放的 Live2D 演出画布。
 
 ## 默认模型
 
