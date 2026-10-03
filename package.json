@@ -50,11 +50,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/B612plant/DSHLive2d-plugin.git"
+    "url": "git+https://github.com/B612plant/dsh-plugin-live2d-stage.git"
   },
-  "homepage": "https://github.com/B612plant/DSHLive2d-plugin",
+  "homepage": "https://github.com/B612plant/dsh-plugin-live2d-stage",
   "bugs": {
-    "url": "https://github.com/B612plant/DSHLive2d-plugin/issues"
+    "url": "https://github.com/B612plant/dsh-plugin-live2d-stage/issues"
   },
   "keywords": [
     "dsh-plugin",
