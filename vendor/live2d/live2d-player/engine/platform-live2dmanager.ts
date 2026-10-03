@@ -370,6 +370,8 @@ export class LAppLive2DManager {
         this._watermarkPlan
       );
     }
+    // Commit post-motion eye/lip/overlay parameters to drawable vertices before rendering.
+    if(cubismModel)cubismModel.update();
     model.draw(projection); // 参照渡しなのでprojectionは変質する。
     if(portrait&&cubismModel){
       const head=LAppDefine.ActiveCharacter?.hitAreas.find(area=>/head|face|头|脸/i.test(area.name));

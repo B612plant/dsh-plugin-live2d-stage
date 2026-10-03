@@ -10,6 +10,24 @@ export default function Player({character,onStatus}:{character:any;onStatus:(tex
   // A monitor DPI change need not change the CSS viewport size.
   useEffect(()=>{let media:MediaQueryList;function changed(){if(player.current?.getDiagnostics()?.status==='ready')window.dispatchEvent(new Event('resize'));watch();}function watch(){media?.removeEventListener('change',changed);media=matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);media.addEventListener('change',changed);}watch();return()=>media.removeEventListener('change',changed);},[]);
 
+  useEffect(()=>{
+    let pointer:{x:number;y:number}|null=null;
+    const move=(e:PointerEvent)=>{if(e.pointerType==='mouse')pointer={x:e.clientX,y:e.clientY};};
+    const leave=(e:MouseEvent)=>{if(!e.relatedTarget)pointer=null;};
+    const clear=()=>{pointer=null;};
+    const native=(e:MessageEvent)=>{const d=e.data;if(d?.type==='live2d-pointer'&&Number.isFinite(d.x)&&Number.isFinite(d.y))pointer={x:d.x,y:d.y};};
+    const webview=(window as any).chrome?.webview;
+    window.addEventListener('pointermove',move,true);window.addEventListener('mouseout',leave);window.addEventListener('blur',clear);
+    webview?.addEventListener?.('message',native);
+    const timer=window.setInterval(()=>{
+      if(!pointer||document.hidden)return;
+      const canvas=document.querySelector('.l2ds canvas');const rect=canvas?.getBoundingClientRect();
+      if(!rect?.width||!rect.height)return;
+      PlatformDelegate.getInstance().setLookTarget((pointer.x-rect.left-rect.width/2)/(rect.width/2),(rect.top+rect.height/2-pointer.y)/(rect.height/2));
+    },50);
+    return()=>{clearInterval(timer);window.removeEventListener('pointermove',move,true);window.removeEventListener('mouseout',leave);window.removeEventListener('blur',clear);webview?.removeEventListener?.('message',native);};
+  },[character.id]);
+
   const model=useMemo(()=>{const split=character.modelPath.lastIndexOf('/'),dir=split<0?'':character.modelPath.slice(0,split+1);const refs=character.model.FileReferences;return {id:character.id,name:character.name,resourcesPath:'/live2d-stage/models/'+character.id+'/'+dir,defaultModelDir:'.',defaultModel3Json:character.modelPath.slice(split+1),icon:'',models:[],idleGroup:Object.keys(refs.Motions??{}).find(x=>/^idle$/i.test(x))??null,motionGroups:Object.fromEntries(Object.entries(refs.Motions??{}).map(([g,rows]:any)=>[g,rows.map((r:any)=>r.File)])),hitAreas:(character.model.HitAreas??[]).map((h:any)=>({id:h.Id,name:h.Name}))};},[character.id,character.modelPath]);
   useEffect(()=>{let closed=false,after:number|undefined,epoch:string|undefined;const client=crypto.randomUUID();let timer:any,lastReport=0;
     async function tick(){try{

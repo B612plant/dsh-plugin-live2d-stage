@@ -116,6 +116,10 @@ export class PlatformDelegate {
     return this.subdelegate?.getLive2DManager().getParameterValue(paramId) ?? 0;
   }
 
+  setLookTarget(x: number, y: number): void {
+    this.subdelegate?.getLive2DManager().setLookTarget(x, y);
+  }
+
   setParameterValue(paramId: string, value: number): void {
     this.subdelegate?.getLive2DManager().setParameterValue(paramId, value);
   }

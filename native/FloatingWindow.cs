@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -18,6 +19,9 @@ public sealed class FloatingWindow : Window {
     readonly JavaScriptSerializer json = new JavaScriptSerializer();
     readonly Dictionary<string,object> config;
     readonly WebView2CompositionControl view = new WebView2CompositionControl();
+    [StructLayout(LayoutKind.Sequential)] struct CursorPoint { public int X; public int Y; }
+    [DllImport("user32.dll")] static extern bool GetCursorPos(out CursorPoint point);
+    readonly DispatcherTimer gazeTimer = new DispatcherTimer();
     readonly DispatcherTimer watchdog = new DispatcherTimer();
     readonly string origin;
     bool closing; bool reported;
@@ -37,7 +41,7 @@ public sealed class FloatingWindow : Window {
         try{var path=Path.Combine(Path.GetDirectoryName((string)config["profile"]),"window-position.json");if(File.Exists(path)){var saved=json.Deserialize<Dictionary<string,double>>(File.ReadAllText(path));Left=Math.Max(SystemParameters.VirtualScreenLeft,Math.Min(SystemParameters.VirtualScreenLeft+SystemParameters.VirtualScreenWidth-80,saved["left"]));Top=Math.Max(SystemParameters.VirtualScreenTop,Math.Min(SystemParameters.VirtualScreenTop+SystemParameters.VirtualScreenHeight-80,saved["top"]));}}catch{}
         PreviewKeyDown+=async(s,e)=>{if(e.Key==Key.Escape && view.CoreWebView2!=null){try{await view.CoreWebView2.ExecuteScriptAsync("window.dispatchEvent(new Event('live2d-native-escape'))");}catch{}}};
         Loaded+=async(s,e)=>{try{await Initialize();}catch(Exception error){Report(new{type="error",message=error.Message});Close();}};
-        Closed+=(s,e)=>{closing=true;watchdog.Stop();view.Dispose();Report(new{type="closed"});};
+        Closed+=(s,e)=>{closing=true;watchdog.Stop();gazeTimer.Stop();view.Dispose();Report(new{type="closed"});};
         watchdog.Interval=TimeSpan.FromSeconds(2);watchdog.Tick+=(s,e)=>{try{if(Process.GetProcessById(Convert.ToInt32(config["parentPid"])).HasExited)Close();}catch{Close();}};watchdog.Start();
     }
     async Task Initialize() {
@@ -90,6 +94,10 @@ public sealed class FloatingWindow : Window {
             }
         };
         try{var path=Path.Combine(Path.GetDirectoryName((string)config["profile"]),"model-layouts.json");if(File.Exists(path)){var layouts=json.Deserialize<Dictionary<string,string>>(File.ReadAllText(path));await core.AddScriptToExecuteOnDocumentCreatedAsync("try{for(const [k,v] of Object.entries("+json.Serialize(layouts)+")){if(k.startsWith('live2d-stage.layout.native.'))localStorage.setItem(k,v);}}catch{}");}}catch{}
+        // Read only cursor position; PointFromScreen handles monitor DPI and negative coordinates.
+        gazeTimer.Interval=TimeSpan.FromMilliseconds(50);
+        gazeTimer.Tick+=(s,e)=>{if(closing||!reported)return;try{CursorPoint cursor;if(GetCursorPos(out cursor)){var point=view.PointFromScreen(new Point(cursor.X,cursor.Y));core.PostWebMessageAsJson(json.Serialize(new{type="live2d-pointer",x=point.X,y=point.Y}));}}catch{}};
+        gazeTimer.Start();
         core.Navigate((string)config["url"]);
         Task.Run(()=>{try{while(Console.ReadLine()!=null){} }catch{} Dispatcher.BeginInvoke(new Action(()=>{if(!closing)Close();}));});
     }
