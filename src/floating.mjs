@@ -18,7 +18,7 @@ export class FloatingController {
       child.stderr.on('data',()=>{});child.on('error',error=>{if(this.child===child){this.child=null;this.token='';}finish(error);});
       child.on('exit',()=>{lines.close();if(this.child===child){this.child=null;this.token='';this.status='closed';this.onClose();}finish(new Error(this.error||'桌面悬浮窗口已关闭'));});
       child.stdin.on('error',()=>{});
-      child.stdin.write(JSON.stringify({url:this.origin+'/live2d-stage/assets/floating.html?launch='+randomBytes(12).toString('hex'),token:this.token,profile:this.profile,parentPid:process.pid,...testOptions})+'\n');
+      child.stdin.write(JSON.stringify({url:this.origin+'/live2d-stage/assets/floating.html?launch='+randomBytes(12).toString('hex'),token:this.token,profile:this.profile,parentPid:process.pid,...testOptions})+'\n','utf8');
     }).finally(()=>{this.pending=null;});return this.pending;
   }
   async stop(){const child=this.child;if(!child)return;this.child=null;this.token='';this.status='closed';await new Promise(resolveStop=>{const timer=setTimeout(()=>{child.kill();resolveStop();},4000);child.once('exit',()=>{clearTimeout(timer);resolveStop();});child.stdin.end();});}

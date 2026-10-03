@@ -35,11 +35,11 @@ function Settings({store,close}:{store:StageState;close?:()=>void}){
   const file=useRef<HTMLInputElement>(null),lock=useRef(false),character=state.characters.find((c:any)=>c.id===state.selectedId);
   async function run(fn:()=>Promise<any>){if(lock.current)return false;lock.current=true;setError('');setSaved('');setBusy(true);try{await fn();await store.refresh();setSaved('已保存');return true;}catch(e:any){setError(e.message);return false;}finally{lock.current=false;setBusy(false);}}
   useEffect(()=>setQuery(''),[state.selectedId]);
-  async function preview(actionId:string){setError('');if(state.preferences?.visible===false&&!state.preferences?.desktopFloating){setError('请先启用桌面预览，等待模型就绪后再试播。');return;}try{await api('play',{characterId:character.id,actionId});close?.();}catch(e:any){setError(e.message);}}
+  async function preview(actionId:string){setError('');if(state.preferences?.visible===false&&!state.preferences?.desktopFloating){setError('请先启用「Harness 内使用」或「桌面悬浮」，等待模型就绪后再试播。');return;}try{await api('play',{characterId:character.id,actionId});close?.();}catch(e:any){setError(e.message);}}
   const actions=character?.actions.filter((a:any)=>a.name.toLowerCase().includes(query.toLowerCase()))??[];
   return <section className="l2ds-config" aria-label="DSHLive2D 配置">
     <h2>DSHLive2D</h2><p className="l2ds-muted">作者：小红书号 4190947207 · GitHub：<a href="https://github.com/B612plant" target="_blank" rel="noreferrer">B612plant</a></p><p className="l2ds-muted">配置角色模型与演出动作，让 Agent 根据当前角色选择动作。</p>
-    <div className="l2ds-config-card l2ds-toggle"><div><strong>桌面预览</strong><p className="l2ds-muted">仅显示角色。拖拽移动画布，双击后分别调整画布和人物的大小、位置。</p></div><label><input type="checkbox" checked={state.preferences?.visible!==false} disabled={busy} onChange={e=>void run(()=>api('preferences',{visible:e.target.checked}))}/>启用</label></div>
+    <div className="l2ds-config-card l2ds-toggle"><div><strong>Harness 内使用</strong><p className="l2ds-muted">仅显示角色。拖拽移动画布，双击后分别调整画布和人物的大小、位置。</p></div><label><input type="checkbox" checked={state.preferences?.visible!==false} disabled={busy} onChange={e=>void run(()=>api('preferences',{visible:e.target.checked}))}/>启用</label></div>
 
     <div className="l2ds-config-card l2ds-toggle"><div><strong>桌面悬浮</strong><p className="l2ds-muted">独立透明置顶窗口，切换到其他应用后仍可使用。拖拽角色移动窗口，双击进入调整。</p></div><label><input aria-label="桌面悬浮" type="checkbox" disabled={busy} checked={!!state.preferences?.desktopFloating} onChange={e=>void run(()=>api('preferences',{desktopFloating:e.target.checked}))}/>启用</label></div>
     <div className="l2ds-config-card l2ds-toggle"><div><strong>动作控制（将消耗更多 token）</strong><p className="l2ds-muted">允许 Agent 在对话中读取动作列表，选择与内容最合适的动作播放。请先试播并准确命名动作。</p></div><label><input aria-label="动作控制" type="checkbox" disabled={busy} checked={!!state.preferences?.actionControl} onChange={e=>void run(()=>api('preferences',{actionControl:e.target.checked}))}/>启用</label></div>
@@ -52,7 +52,7 @@ function Settings({store,close}:{store:StageState;close?:()=>void}){
       {!actions.length&&<div className="l2ds-empty">{query?'没有匹配的动作。':'模型没有动作或表情文件，可预览静态模型。'}</div>}
       <div className="l2ds-action-list">{actions.map((a:any)=><div className="l2ds-action" key={character.id+a.id}><span className="l2ds-kind" title={a.named?'已命名':'请先试播并确认名称'}>{a.named?(a.kind==='motion'?'动作':'表情'):'待命名'}</span><input key={a.name} aria-label="动作名称" defaultValue={a.name} maxLength={80} disabled={busy} onBlur={e=>{if(e.target.value!==a.name)void run(()=>api('update',{characterId:character.id,actionId:a.id,actionName:e.target.value}));}}/><button title="试播后，修改名称或点击确认名称，才会提供给 Agent" disabled={busy||(state.preferences?.visible===false&&!state.preferences?.desktopFloating)} onClick={()=>void preview(a.id)}>试播</button>{!a.named&&<button disabled={busy} onClick={()=>void run(()=>api('update',{characterId:character.id,actionId:a.id,actionName:a.name}))}>确认名称</button>}</div>)}</div></>}
     {(error||state.error)&&<p role="alert" className="l2ds-error">{error||state.error}</p>}<div className="l2ds-save" aria-live="polite">{busy?'正在保存…':saved}</div>
-    <div className="l2ds-config-card"><strong>Agent 演出能力</strong><p className="l2ds-muted">动作控制默认关闭；开启后才向 Agent 提供演出工具与选择说明。桌面预览或桌面悬浮就绪后均可播放；没有合适动作时继续正常回复。</p></div>
+    <div className="l2ds-config-card"><strong>Agent 演出能力</strong><p className="l2ds-muted">动作控制默认关闭；开启后才向 Agent 提供演出工具与选择说明。Harness 内的角色或桌面悬浮角色就绪后均可播放；没有合适动作时继续正常回复。</p></div>
   </section>;
 }
 export const name='live2d-stage-client';

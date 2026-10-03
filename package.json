@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-live2d-stage",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "type": "module",
   "description": "DSHLive2D — DeepSeek Harness Live2D 桌面角色、动作预览与 Agent 动作控制",
   "main": "./lib/index.mjs",

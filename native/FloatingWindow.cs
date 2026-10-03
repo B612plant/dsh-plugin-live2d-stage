@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -40,6 +41,15 @@ public sealed class FloatingWindow : Window {
         watchdog.Interval=TimeSpan.FromSeconds(2);watchdog.Tick+=(s,e)=>{try{if(Process.GetProcessById(Convert.ToInt32(config["parentPid"])).HasExited)Close();}catch{Close();}};watchdog.Start();
     }
     async Task Initialize() {
+        // Check the exact Unicode directory before WebView2 displays its own generic dialog.
+        var profile=(string)config["profile"];
+        try {
+            Directory.CreateDirectory(profile);
+            var probe=Path.Combine(profile,".write-check-"+Guid.NewGuid().ToString("N"));
+            using(var file=new FileStream(probe,FileMode.CreateNew,FileAccess.Write,FileShare.None,1,FileOptions.DeleteOnClose)){file.WriteByte(0);}
+        } catch(Exception error) {
+            throw new IOException("无法读写桌面悬浮缓存目录："+profile+"。"+error.Message,error);
+        }
         var environment=await CoreWebView2Environment.CreateAsync(null,(string)config["profile"],new CoreWebView2EnvironmentOptions("--autoplay-policy=no-user-gesture-required"));
         await view.EnsureCoreWebView2Async(environment);
         var core=view.CoreWebView2;
@@ -84,6 +94,10 @@ public sealed class FloatingWindow : Window {
         Task.Run(()=>{try{while(Console.ReadLine()!=null){} }catch{} Dispatcher.BeginInvoke(new Action(()=>{if(!closing)Close();}));});
     }
     [STAThread] public static void Main() {
+        // Node pipes JSON as UTF-8. Never decode paths with the Windows console code page.
+        Console.SetIn(new StreamReader(Console.OpenStandardInput(),new UTF8Encoding(false,true),false));
+        Console.SetOut(new StreamWriter(Console.OpenStandardOutput(),new UTF8Encoding(false)){AutoFlush=true});
+        Console.SetError(new StreamWriter(Console.OpenStandardError(),new UTF8Encoding(false)){AutoFlush=true});
         try{var line=Console.ReadLine();if(line==null)return;var config=new JavaScriptSerializer().Deserialize<Dictionary<string,object>>(line);new Application().Run(new FloatingWindow(config));}
         catch(Exception e){Report(new{type="error",message=e.ToString()});Environment.ExitCode=1;}
     }
