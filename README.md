@@ -41,7 +41,16 @@
 
 角色和配置默认保存在 `%USERPROFILE%\.dsh\live2d-stage`；设置 `DSH_HOME` 后使用其下的 `live2d-stage` 目录。升级插件不会覆盖已导入的模型。
 
-内置 Hiyori 来自 Live2D 示例模型。模型、Cubism SDK 和其他第三方组件仍受各自许可约束，详见 [licenses](licenses)。
+本项目由 B612plant 编写的原创代码及文档采用 [MIT License](LICENSE)，版权声明为 `Copyright (c) 2026 B612plant`。`package.json` 中的 `MIT` 标识仅描述这部分内容；第三方代码、资源及其在构建产物中的副本不因此改为 MIT 许可。
+
+以下内容保留各自的许可与版权声明：
+
+- Live2D Cubism SDK（`vendor/live2d/sdk`），包括 Core、Framework 和示例代码，以及复制或打包到 `assets`、`lib` 中的相关代码与着色器，详见 [Core 许可](licenses/Cubism-Core.md)、[Framework 许可](licenses/Cubism-Framework.md)和[示例许可](licenses/Cubism-Samples.md)
+- 内置 Hiyori（`character/hiyori`）的模型、纹理和动作，遵循 Live2D [无偿提供素材使用授权协议](https://www.live2d.com/eula/live2d-free-material-license-agreement_cn.html)及[示例模型使用条件](https://www.live2d.com/eula/live2d-sample-model-terms_en.html)，不属于本项目的 MIT 授权范围
+- WebView2 组件遵循其[许可](lib/native/WebView2-LICENSE.txt)和[声明](lib/native/WebView2-NOTICE.txt)；其他第三方依赖及图标详见 [licenses](licenses)
+- 导入的模型及其他第三方美术资源遵循原权利人的授权；本项目的 MIT 许可不授予这些资源的使用权
+
+使用或分发包含 Live2D SDK 的应用时，还需按实际用途确认适用的 [Cubism SDK 发行许可](https://www.live2d.com/en/sdk/license/)。
 
 ## 开发
 
